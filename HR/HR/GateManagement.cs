@@ -10,6 +10,7 @@ namespace HR
     public class GateManagement
     {
         Dictionary<string, People> AddPeople = new Dictionary<string, People>();
+        public ConnectionSQL ConnectionDB = new ConnectionSQL();
 
         public void AddVisitor(People NewPerson)
         {
