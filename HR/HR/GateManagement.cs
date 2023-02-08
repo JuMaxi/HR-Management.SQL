@@ -1,6 +1,7 @@
 ﻿using Spectre.Console.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,22 +10,32 @@ namespace HR
 {
     public class GateManagement
     {
-        Dictionary<string, People> AddPeople = new Dictionary<string, People>();
         public ConnectionSQL ConnectionDB = new ConnectionSQL();
 
         public void AddVisitor(People NewPerson)
         {
-            AddPeople.Add(NewPerson.NumberCPF.Number,NewPerson);
+            string Insert = "insert into GateManagement(Name, CPF) values ('" + NewPerson.Name + "','" + NewPerson.NumberCPF.Number + "')";
+
+            ConnectionDB.AccessNonQuery(Insert);
         }
         public void CheckAccess(string CPF)
         {
-            if (AddPeople.ContainsKey(CPF))
+            string Select = "select * from GateManagement where CPF='" + CPF + "'";
+
+            SqlDataReader Reader = ConnectionDB.AccessReader(Select);
+
+            while(Reader.Read())
             {
-                Console.WriteLine("Access permitted to " + AddPeople[CPF].Name);
-            }
-            else
-            {
-                Console.WriteLine("Access denied to CPF number " + CPF);
+                string StringCPF = Convert.ToString(Reader["CPF"]);
+
+                if (StringCPF == CPF)
+                {
+                    Console.WriteLine("Access permitted to " + Reader["Name"]);
+                }
+                else
+                {
+                    Console.WriteLine("Access denied to CPF number " + CPF);
+                }
             }
         }
     }
